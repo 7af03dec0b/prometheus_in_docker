@@ -1,0 +1,27 @@
+groups:
+    - name: node_production
+      rules:
+          - alert: fake_load_alarm_1
+            expr: |-
+              node_fake_load1 > on (instance,role,dc) group_left(alert_id)
+                (
+                    load_threshold
+                  OR
+                    on (instance,role,dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role,dc ) group_left (alert_id) ( load_threshold{instance=""} )
+                  OR
+                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role) group_left (alert_id) ( load_threshold{instance="",dc=""})
+                  OR
+                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on () group_left (alert_id) (load_threshold{instance="",dc="",role=""})
+                )
+            for: 10s
+            labels:
+                severity: CRITICAL
+                impact_points: 4
+                instance: "{{ $labels.instance }}"
+                role: "{{ $labels.role }}"
+                dc: "{{ $labels.dc }}"
+                env: "{{ $labels.env }}"
+                alert_id: "{{ $labels.alert_id }}"
+            annotations:
+                summary: The load per core {{ $labels.instance }} is is too high
+                description: The load per core {{ $labels.instance }} is is too high
