@@ -6,6 +6,12 @@ global:
   external_labels:
     dc: 'docker-lab'
 
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - alertmanager:9093
+
 rule_files:
     - rules.d/*.yml
 

@@ -10,9 +10,17 @@ services:
       - ./prometheus/etc:/etc/prometheus
       - ./prometheus/db:/prometheus
     links:
+      - alertmanager
       - client-a1
       - client-a2
       - client-b1
+  alertmanager:
+      user: $PGUSER
+      image: prom/alertmanager:latest
+      volumes:
+        - ./alertmanager/etc:/etc/alertmanager:rw
+      ports:
+        - "9093:9093"
   client-a1:
       image: quay.io/prometheus/node-exporter:latest
       privileged: false
