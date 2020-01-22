@@ -3,15 +3,15 @@ groups:
       rules:
           - alert: fake_load_alarm_1
             expr: |-
-              node_fake_load1 > on (instance,role,dc) group_left(alert_id)
+              node_fake_load1 > on (instance,role,dc) group_left(alert_id, alert_debug)
                 (
-                    load_threshold
+                    label_replace(load_threshold, "alert_debug", "0", "dc", ".*")
                   OR
-                    on (instance,role,dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role,dc ) group_left (alert_id) ( load_threshold{instance=""} )
+                    on (instance,role,dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role,dc ) group_left (alert_id, alert_debug) ( label_replace(load_threshold{instance=""}, "alert_debug", "1", "dc", ".*") )
                   OR
-                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role) group_left (alert_id) ( load_threshold{instance="",dc=""})
+                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role) group_left (alert_id, alert_debug) ( label_replace(load_threshold{instance="",dc=""}, "alert_debug", "2", "dc", ".*") )
                   OR
-                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on () group_left (alert_id) (load_threshold{instance="",dc="",role=""})
+                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on () group_left (alert_id, alert_debug) (label_replace(load_threshold{instance="",dc="",role=""}, "alert_debug", "3", "dc", ".*") )
                 )
             for: 10s
             labels:
@@ -22,6 +22,7 @@ groups:
                 dc: "{{ $labels.dc }}"
                 env: "{{ $labels.env }}"
                 alert_id: "{{ $labels.alert_id }}"
+                alert_debug: "{{ $labels.alert_debug }}"
             annotations:
                 summary: The load per core {{ $labels.instance }} is is too high
                 description: The load per core {{ $labels.instance }} is is too high
