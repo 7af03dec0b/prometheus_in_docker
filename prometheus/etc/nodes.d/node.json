@@ -1,0 +1,38 @@
+[
+    {
+        "targets": [
+            "client-a1:9100"
+        ],
+        "labels": {
+            "dc": "docker_lab",
+            "env": "prod",
+            "job": "node",
+            "role": "role-a",
+            "__fqdn": "client-a1.internal"
+        }
+    },
+    {
+        "targets": [
+            "client-a2:9100"
+        ],
+        "labels": {
+            "dc": "docker_lab",
+            "env": "prod",
+            "job": "node",
+            "role": "role-a",
+            "__fqdn": "client-a2.internal"
+        }
+    },
+    {
+        "targets": [
+            "client-b1:9100"
+        ],
+        "labels": {
+            "dc": "docker_lab",
+            "env": "prod",
+            "job": "node",
+            "role": "role-b",
+            "__fqdn": "client-b1.internal"
+        }
+    }
+]

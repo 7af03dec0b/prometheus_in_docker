@@ -1,0 +1,28 @@
+# my global config
+global:
+  scrape_interval:     10s
+  evaluation_interval: 10s
+  # scrape_timeout is set to the global default (10s).
+  external_labels:
+    dc: 'docker-lab'
+
+rule_files:
+    - rules.d/*.yaml
+
+scrape_configs:
+    - job_name: "file_imports"
+      honor_labels: true
+      file_sd_configs:
+          - files:
+                - nodes.d/*.json
+            refresh_interval: 5s
+
+      relabel_configs:
+          - source_labels:
+                - __fqdn
+                - __address__
+            separator: ":"
+            regex: ^([^:]+):[^:]+:([^:]+)$
+            target_label: instance
+            replacement: ${1}:${2}
+            action: replace

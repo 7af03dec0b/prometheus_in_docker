@@ -1,0 +1,5 @@
+load_threshold_default 1
+load_threshold_instance{dc="docker_lab",role="role-a",instance="client-a2.internal:9100"} 3.5
+load_threshold_role_dc{instance="",dc="docker_lab",role="role-a"} 1.2
+load_threshold_role_dc{instance="",dc="docker_lab",role="role-c"} 10
+load_threshold_role{instance="",dc="",role="role-b"} 1.01

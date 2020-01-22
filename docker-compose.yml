@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  prometheus:
+    user: $PGUSER
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/etc:/etc/prometheus
+      - ./prometheus/db:/prometheus
+    links:
+      - client-a1
+      - client-a2
+      - client-b1
+  client-a1:
+      image: quay.io/prometheus/node-exporter:latest
+      privileged: false
+      restart: unless-stopped
+      volumes:
+        - ./node_exporter/client-a1:/import:ro
+      ports:
+        - 9100
+      command:
+        - '--collector.textfile.directory=/import'
+  client-a2:
+      image: quay.io/prometheus/node-exporter:latest
+      privileged: false
+      restart: unless-stopped
+      volumes:
+        - ./node_exporter/client-a2:/import:ro
+      ports:
+        - 9100
+      command:
+        - '--collector.textfile.directory=/import'
+  client-b1:
+      image: quay.io/prometheus/node-exporter:latest
+      privileged: false
+      restart: unless-stopped
+      volumes:
+        - ./node_exporter/client-b1:/import:ro
+      ports:
+        - 9100
+      command:
+        - '--collector.textfile.directory=/import'
