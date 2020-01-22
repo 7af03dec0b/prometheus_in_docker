@@ -1,3 +1,5 @@
+.*.sw?
 prometheus/db/*
 !prometheus/db/.empty
-.*.sw?
+alertmanager/data/*
+!alertmanager/data/.empty

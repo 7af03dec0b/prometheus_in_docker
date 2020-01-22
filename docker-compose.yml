@@ -17,8 +17,10 @@ services:
   alertmanager:
       user: $PGUSER
       image: prom/alertmanager:latest
+      command: "--config.file=/etc/alertmanager/alertmanager.yml --storage.path=/data/"
       volumes:
         - ./alertmanager/etc:/etc/alertmanager:rw
+        - ./alertmanager/data:/data:rw
       ports:
         - "9093:9093"
   client-a1:
