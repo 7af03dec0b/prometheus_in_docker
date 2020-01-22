@@ -1,2 +1,3 @@
 prometheus/db/*
 !prometheus/db/.empty
+.*.sw?

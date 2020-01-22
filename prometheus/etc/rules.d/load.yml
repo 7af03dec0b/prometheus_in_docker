@@ -5,13 +5,13 @@ groups:
             expr: |-
               node_fake_load1 > on (instance,role,dc) group_left(alert_id, alert_debug)
                 (
-                    label_replace(load_threshold, "alert_debug", "0", "dc", ".*")
+                    label_replace(load_threshold, "alert_debug", "0", "", ".*")
                   OR
-                    on (instance,role,dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role,dc ) group_left (alert_id, alert_debug) ( label_replace(load_threshold{instance=""}, "alert_debug", "1", "dc", ".*") )
+                    on (instance,role,dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role,dc ) group_left (alert_id, alert_debug) ( label_replace(load_threshold{instance=""}, "alert_debug", "1", "", ".*") )
                   OR
-                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role) group_left (alert_id, alert_debug) ( label_replace(load_threshold{instance="",dc=""}, "alert_debug", "2", "dc", ".*") )
+                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on (role) group_left (alert_id, alert_debug) ( label_replace(load_threshold{instance="",dc=""}, "alert_debug", "2", "", ".*") )
                   OR
-                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on () group_left (alert_id, alert_debug) (label_replace(load_threshold{instance="",dc="",role=""}, "alert_debug", "3", "dc", ".*") )
+                    on (instance, role, dc) count by (instance,role,dc) (node_fake_load1)*0 + on () group_left (alert_id, alert_debug) (label_replace(load_threshold{instance="",dc="",role=""}, "alert_debug", "3", "", ".*") )
                 )
             for: 10s
             labels:
