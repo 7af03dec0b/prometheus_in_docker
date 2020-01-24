@@ -1,5 +1,8 @@
 # prometheus\_in\_docker
 
+## Prerequisites
+To try and use local docker prometheus setup on MacOS or Windows, you have to install Docker Desktop from https://docs.docker.com/get-started/ If you want to install individual componenets, then Docker CE and docker-compose are the prerequisites.
+
 ## Developing prometheus rules in docker
 Simply execute `./docker.sh` and you'll get following setup:
 * prometheus, reachable on port 9090, with configuration under `./prometheus/etc`

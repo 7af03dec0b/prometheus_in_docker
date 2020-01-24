@@ -1,0 +1,69 @@
+rule_files:
+    - ../rules.d/load.yml
+
+evaluation_interval: 10s
+
+tests:
+    # Test 1.
+    - interval: 10s
+      # Series data.
+      input_series:
+        # limits
+        - series: 'load_threshold{alert_id="default",env="prod",job="node"}'
+          values: '1+0x30'
+        - series: 'load_threshold{alert_id="instance",dc="docker_lab",env="prod",instance="client-a2.internal:9100",job="node",role="role-a"}'
+          values: '3+0x30'
+        - series: 'load_threshold{alert_id="role",env="prod",job="node",role="role-c"}'
+          values: '0.01+0x30'
+        - series: 'load_threshold{alert_id="role+dc",dc="docker_lab",env="prod",job="node",role="role-a"}'
+          values: '2+0x30'
+        - series: 'load_threshold{alert_id="role+dc",dc="docker_lab",env="prod",job="node",role="role-c"}'
+          values: '2.5+0x30'
+        # loads
+        - series: 'node_fake_load1{dc="docker_lab",env="prod",instance="client-a1.internal:9100",job="node",role="role-a"}'
+          values: '0.1+0x5 1.1+0x5 2.1+0x5 2.6+0x5 1.1+0x5 0.1+0x5'
+        - series: 'node_fake_load1{dc="docker_lab",env="prod",instance="client-a2.internal:9100",job="node",role="role-a"}'
+          values: '0.2+0x5 1.2+0x5 2.2+0x5 2.7+0x5 1.2+0x5 0.2+0x5'
+        - series: 'node_fake_load1{dc="docker_lab",env="prod",instance="client-b1.internal:9100",job="node",role="role-b"}'
+          values: '0.3+0x5 1.3+0x5 2.3+0x5 2.7+0x5 1.3+0x5 0.3+0x5'
+
+      # Unit test for alerting rules.
+      alert_rule_test:
+          - eval_time: 30s
+            # series 1, 1st minute, a1: no alerm, a2: no alarm, b1: no alarm
+            alertname: fake_load_alarm_1
+            exp_alerts:
+                    # no expeected alerts
+          - eval_time: 90s
+            # series 2, 2nd minute, a1: no alert, a2: no alarm, b1: alarm 'default'
+            alertname: fake_load_alarm_1
+            exp_alerts:
+                - exp_labels:
+                      # b1
+                      severity: CRITICAL
+                      instance: client-b1.internal:9100
+                      job: node
+                      role: role-b
+                      env: prod
+                      dc: docker_lab
+                      alert_id: default
+                      alert_debug: 3
+                      impact_points: 4
+                  exp_annotations:
+                      summary: "The load per core client-b1.internal:9100 is is too high - summary"
+                      description: "The load per core client-b1.internal:9100 is is too high - description"
+      # Unit tests for promql expressions.
+      promql_expr_test:
+          - expr: node_fake_load1 >= 0.2
+            eval_time: 30s
+            exp_samples:
+                - labels: 'node_fake_load1{dc="docker_lab",env="prod",instance="client-a2.internal:9100",job="node",role="role-a"}'
+                  value: 0.2
+                - labels: 'node_fake_load1{dc="docker_lab",env="prod",instance="client-b1.internal:9100",job="node",role="role-b"}'
+                  value: 0.3
+          - expr: node_fake_load1 < 1.2
+            eval_time: 90s
+            exp_samples:
+                - labels: 'node_fake_load1{dc="docker_lab",env="prod",instance="client-a1.internal:9100",job="node",role="role-a"}'
+                  value: 1.1
+
