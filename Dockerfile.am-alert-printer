@@ -1,0 +1,8 @@
+FROM python:3
+
+EXPOSE 80
+WORKDIR /usr/src/app
+COPY http-to-stdout.py ./
+RUN pip install flask
+CMD [ "python", "./http-to-stdout.py" ]
+

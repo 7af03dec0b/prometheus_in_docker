@@ -21,8 +21,18 @@ services:
       volumes:
         - ./alertmanager/etc:/etc/alertmanager:rw
         - ./alertmanager/data:/data:rw
+      links:
+        - am-alert-printer
       ports:
         - "9093:9093"
+  am-alert-printer:
+      build:
+        context: .
+        dockerfile: Dockerfile.am-alert-printer
+      ports:
+        - 80
+      stdin_open: true
+      tty: true
   client-a1:
       image: quay.io/prometheus/node-exporter:latest
       privileged: false
